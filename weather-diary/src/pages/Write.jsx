@@ -27,7 +27,7 @@ function Write() {
         </h2>
         <form onSubmit={handleSubmit}>
         <textarea
-            placeholder="일기를 입력란"
+            placeholder="일기를 입력하시오"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={10}

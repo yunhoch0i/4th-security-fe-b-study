@@ -1,30 +1,48 @@
-import React, {useState, useEffect} from "react";
-import DiaryCard  from "../components/DiaryCard.jsx";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import DiaryCard from "../components/DiaryCard.jsx";
 import WeatherBox from "../components/WeatherBox.jsx";
-import useWeather from "../hooks/useWeather.js";
-import Header from "../components/Header.jsx";
+import useWeather from "../hooks/useWeather";
 
 function Home() {
-  const [diaries, setDiaries] = useState([]);
-  const weather = useWeather();
-  useEffect(() => { const savedDiaries = JSON.parse(localStorage.getItem("diaries") || "[]");
-    setDiaries(savedDiaries);
-  }, []);
+    const [diaries, setDiaries] = useState([]);
+    const weather = useWeather();
 
-  return (
-      <div>
+    useEffect(() => {
+        const savedDiaries = JSON.parse(localStorage.getItem("diaries") || "[]");
+        setDiaries(savedDiaries);
+    }, []);
 
-        <h2>
-          <Header />
-          📘 일기 리스트 페이지입니다
-          <WeatherBox weather={weather} />
-        </h2>
-        {diaries.map((diary, index) => (
-            <DiaryCard key={index} date={diary.date} content={diary.content} />
-        ))}
-      </div>
+    const handleUpdate = (index, updatedContent) => {
+        const updatedDiaries = diaries.map((diary, i) => {
+            if (i === index) {
+                return { ...diary, content: updatedContent };
+            }
+            return diary;
+        });
+        setDiaries(updatedDiaries);
+        localStorage.setItem("diaries", JSON.stringify(updatedDiaries));
+    };
 
-  );
+    return (
+        <div>
+
+            <h2>📘 일기 리스트 페이지입니다</h2>
+            <WeatherBox weather={weather} />
+            <Link to="/write">
+                <button>일기 작성하기</button>
+            </Link>
+            {diaries.map((diary, index) => (
+                <DiaryCard
+                    key={index}
+                    index={index}
+                    date={diary.date}
+                    content={diary.content}
+                    onUpdate={handleUpdate}
+                />
+            ))}
+        </div>
+    );
 }
 
 export default Home;
